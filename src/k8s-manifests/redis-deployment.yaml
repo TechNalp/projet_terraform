@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redis
+  name: redis-deplt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      volumes:
+        - name: redis-healthcheck
+          emptyDir: {}
+      initContainers:
+        - name: init-redis-pod
+          image: alpine
+          command:
+            [
+              "sh",
+              "-c",
+              "apk update && apk add wget && wget -O /healthchecks/redis.sh https://gitlab.imt-atlantique.fr/login-nuage/healthchecks/-/raw/main/redis.sh?ref_type=heads && chmod +x /healthchecks/redis.sh",
+            ]
+          volumeMounts:
+            - mountPath: /healthchecks
+              name: redis-healthcheck
+      containers:
+        - image: redis:alpine
+          name: redis-container
+          volumeMounts:
+            - mountPath: /healthchecks
+              name: redis-healthcheck
+          ports:
+            - containerPort: 6379
+              name: redis-port
+          livenessProbe:
+            exec:
+              command:
+                - /healthchecks/redis.sh
+            periodSeconds: 15
