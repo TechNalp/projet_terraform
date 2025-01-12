@@ -36,6 +36,8 @@ Les modules que nous avons créés:
 
 > Nous supposons que vous avez créer un compte de service avec les bonnes permisssions (nottament `Service Account Token Creator`)
 
+> Bien utiliser les src qui sont dans ce dépot (car nous avons modifier les deployement de worker et vote pour les rendre compatible avec redis offloaded
+
 ## Pour la partie 1 (docker en local):
 
 > Bien avoir docker de lancé
